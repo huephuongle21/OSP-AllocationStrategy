@@ -40,7 +40,7 @@ C++ is used so instead of c file, this project contains .h file and .cpp file
 $ make
 $ ./main inputFileName outputFileNameForFirstFit outputFileNameForBestFit outputFileNameForWorstFit
 ```
-* Example: ./main middle-names.txt firstfit.txt bestfit.txt worstfit.txt
+* Example: ./main DataSets/first-names-1.txt FF.txt BF.txt WF.txt
 
-* If not enough output file names are provided, the default file for each strategy (FF.txt, BF.txt, WF.txt for First Fit, Best Fit, Worst Fit respectively)
+* If not enough output file names are provided, the default file for each strategy (firstfit.txt, bestfit.txt, worstfit.txt for First Fit, Best Fit, Worst Fit respectively)
 will be generated automatically
