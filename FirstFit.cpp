@@ -10,10 +10,8 @@ bool FirstFit::perform(std::string name) {
     // Get the size of new name
     size_t size = strlen(name.c_str());
 
-    // Get the start of sets of holes
-    Node* head = freedMBList->getHead();
-
     // Search to find the first hole which is large enough
+    Node* head = freedMBList->getHead();
     while(head != nullptr) {
         MemoryBlock* copy = head->value;
         int gap = copy->getSize() - size;

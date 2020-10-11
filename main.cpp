@@ -9,16 +9,20 @@
 
 int main(int argc, char** argv) {
     std::string fileName = "";
-    std::string FF_outputFileName = "firstfit";
-    std::string BF_outputFileName = "bestfit";
-    std::string WF_outputFileName = "worstfit";
-    if(argc == 5) {
+    std::string FF_outputFileName = "firstfit.txt";
+    std::string BF_outputFileName = "bestfit.txt";
+    std::string WF_outputFileName = "worstfit.txt";
+    if(argc >= 2) {
         fileName = argv[1];
-        FF_outputFileName = argv[2];
-        BF_outputFileName = argv[3];
-        WF_outputFileName = argv[4];
+        if(argc == 5) {
+            FF_outputFileName = argv[2];
+            BF_outputFileName = argv[3];
+            WF_outputFileName = argv[4];
+        } else {
+            std::cout << "Output filename invalid. Proceeding with default output files." << std::endl;
+        }
     } else {
-        // Not enough required arguments
+        std::cout << "No input filename" << std::endl;
     }
 
     // Read names from file
@@ -27,14 +31,16 @@ int main(int argc, char** argv) {
 
     unsigned int size = names.size();
 
+    // Generate random indexes for dealocating later
     int* randomNumbers = new int[size];
     generateRandomDeletedNumbers(randomNumbers, size);
 
+    // Create 3 allocation strategies
     AllocationStrategy* FF = new FirstFit();
     AllocationStrategy* BF = new BestFit();
     AllocationStrategy* WF = new WorstFit();
 
-    // Perform
+    // Perform for each allocation for the data set
     perform(FF, names, randomNumbers);
     perform(BF, names, randomNumbers);
     perform(WF, names, randomNumbers);

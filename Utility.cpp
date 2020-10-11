@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <math.h>
 
-// Change from array to vector
 void readFile(std::vector<std::string>& names, std::string filename) {
     std::string line;
     std::ifstream inFile;
@@ -42,24 +41,24 @@ void generateRandomDeletedNumbers(int* numbers, unsigned int size) {
 }
 
 void allocateMemoryToHole(LinkedList* freedMBList, LinkedList* allocMBList, 
-        std::string name, MemoryBlock* copy) {
-    // Delete the block in freedMBList
-    copy->setContent(name);
+        std::string name, MemoryBlock* hole) {
+    
+    hole->setContent(name);
 
     // Update allocMBList
-    updateAllocFromFreed(allocMBList, copy, name, copy->getSize());
+    updateAllocFromFreed(allocMBList, hole, name, hole->getSize());
 
-    // Perform merging as the 'copy' block is empty
+    // Delete the block in freedMBList
     Node* head = freedMBList->getHead();
-    if(head != nullptr && head->value->getAddress() == copy->getAddress()) {
-        // set head of linked list to headFreed->next
+    if(head != nullptr && head->value->getAddress() == hole->getAddress()) {
+        // Set head of linked list to head->next
         freedMBList->setHead(head->next);
     } else {
         Node* prev = head;
         Node* current = head->next;
         Node* next = current->next;
         while(current != nullptr) {
-            if(current->value->getAddress() == copy->getAddress()) {
+            if(current->value->getAddress() == hole->getAddress()) {
                 break;
             } else {
                 prev = current;
@@ -94,12 +93,12 @@ void updateAllocFromFreed(LinkedList* allocMBList, MemoryBlock* hole,
     // by spliting existing one
     if(!isAllocated) {
         MemoryBlock* copy = new MemoryBlock(*hole);
-        allocMBList->addBack(copy);
+        allocMBList->addAllocMBList(copy);
     }
 }
 
-void splitHole(std::string name, LinkedList* freedMBList, LinkedList* allocMBList, 
-        MemoryBlock* hole, int gap) {
+void splitHole(std::string name, LinkedList* freedMBList, 
+        LinkedList* allocMBList, MemoryBlock* hole, int gap) {
     // Get the size of new content
     size_t size = strlen(name.c_str());
 
@@ -112,18 +111,19 @@ void splitHole(std::string name, LinkedList* freedMBList, LinkedList* allocMBLis
     hole->setSize(size);
     updateAllocFromFreed(allocMBList, hole, name, size);
 
-    // Sort freedMBList
+    // Replace the hole from freedMBList
     hole->setAddress(leftover);
     hole->setSize(gap);
     hole->setContent(EMPTY_BLOCK);
 }
 
-void initialSetup(AllocationStrategy* strategy, std::vector<std::string>& names, int* numbers, unsigned int size) {
+void initialSetup(AllocationStrategy* strategy, std::vector<std::string>& names, 
+        int* numbers, unsigned int size) {
 
     LinkedList* allocMBList = strategy->getAllocMBList();
     LinkedList* freedMBList = strategy->getFreedMBList();
 
-    // Read the first 1000 names
+    // Read the first 1000 names and allocate memory directly using sbrk
     for(int i = 0; i != NUM_READ_NAMES; i++) {
         allocateNewMemory(strategy, names[i]);
     }
@@ -143,9 +143,9 @@ void allocateNewMemory(AllocationStrategy* strategy, std::string name) {
     // Create new memory block and update allocMBList
     MemoryBlock* block = new MemoryBlock(strategy->getCurrentId(), request, size, name);
     strategy->updateId();
-    allocMBList->addBack(block);
+    allocMBList->addAllocMBList(block);
 
-    // Update total memory
+    // Update total memory allocated
     strategy->updateTotalMemory(size);
 }
 
@@ -155,13 +155,13 @@ void deallocateMemory(LinkedList* allocMBList, LinkedList* freedMBList,
     int count = 0;
     for(unsigned int i = 0; i != size; i++) {
         MemoryBlock* block = allocMBList->get(numbers[i]);
-        if(block != nullptr) {
+        if(block != nullptr && block->getContent() != EMPTY_BLOCK) {
             // Set the content of the block in allocMBList to empty
             block->setContent(EMPTY_BLOCK);
             MemoryBlock* copy = new MemoryBlock(*block);
 
             // Add block to freedMBList
-            freedMBList->addBackFreedMBList(copy);
+            freedMBList->addFreedMBList(copy);
             count++;            
         }
         if(count == NUM_DELETE_NAMES) {
@@ -176,12 +176,12 @@ void perform(AllocationStrategy* strategy, std::vector<std::string>& names, int*
 
     unsigned int size = names.size();
 
+    // Read the first 1000 names and delete randomly 500 names
     initialSetup(strategy, names, numbers, size);
 
     int totalReadName = NUM_READ_NAMES;
     int eachTimeReadName = 0;
 
-    // Need to change to vector and read size
     int totalNames = size;
 
     // Loop to perform allocate and deallocate multiple times
@@ -200,7 +200,7 @@ void perform(AllocationStrategy* strategy, std::vector<std::string>& names, int*
                 break;
             }
         }
-        // Delete 500 names if already read 1000 names
+        // Delete 500 names if already allocate for 1000 names
         if(eachTimeReadName == NUM_READ_NAMES) {
             deallocateMemory(allocMBList, freedMBList, numbers, size);
             eachTimeReadName = 0;

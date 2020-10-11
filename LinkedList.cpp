@@ -18,7 +18,7 @@ LinkedList::LinkedList() {
 }
 
 LinkedList::~LinkedList() {
-   clear();
+
 }
 
 MemoryBlock* LinkedList::get(const int index) const {
@@ -36,7 +36,7 @@ MemoryBlock* LinkedList::get(const int index) const {
    return returnValue;
 }
 
-void LinkedList::addBack(MemoryBlock* block) {   
+void LinkedList::addAllocMBList(MemoryBlock* block) {   
    Node* toAdd = new Node(block, nullptr);
    if (head == nullptr) {
       head = toAdd;
@@ -54,7 +54,7 @@ void LinkedList::setSize(int offSet) {
    length += offSet;
 }
 
-void LinkedList::addBackFreedMBList(MemoryBlock* block) {
+void LinkedList::addFreedMBList(MemoryBlock* block) {
    Node* toAdd = new Node(block, nullptr);
    if(head == nullptr || head->value->getId() >= block->getId()) { 
       toAdd->next = head; 
@@ -101,15 +101,6 @@ void LinkedList::merge(Node* prev, Node* curr, Node* next) {
          prev->next = next->next;
          --length;
       }
-   }
-}
-
-void LinkedList::clear() {
-   while (length > 0) {
-      Node* newHead = head->next;
-      delete head;
-      head = newHead;
-      --length;
    }
 }
 

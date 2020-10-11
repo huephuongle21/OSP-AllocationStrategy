@@ -16,33 +16,18 @@ public:
    LinkedList();
    ~LinkedList();
 
-   /**
-    * output: Get the value at the given index.
-    * input: Index must be >=0 and < size()
-    * 
-    */
    MemoryBlock* get(const int index) const;
 
-   /**
-    * Add the value to the back of the Linked List
-    */
-   void addBack(MemoryBlock* block);
-
-   void addBackFreedMBList(MemoryBlock* block);
+   void addAllocMBList(MemoryBlock* block);
+   void addFreedMBList(MemoryBlock* block);
 
    void setSize(int offSet);
 
    void merge(Node* prev, Node* curr, Node* next);
 
-   /**
-    * Removes all values from the Linked List
-    */
-   void clear();
-
    Node* getHead();
 
    void printFreedMBList(std::ostream& outStream);
-
    void printAllocMBList(std::ostream& outStream);
 
    void setHead(Node* newHead);

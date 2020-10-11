@@ -9,9 +9,7 @@ AllocationStrategy::AllocationStrategy() {
 }
 
 AllocationStrategy::~AllocationStrategy() {
-    delete allocMBList;
-    delete freedMBList;
-    totalMemory = 0;
+
 }
 
 LinkedList* AllocationStrategy::getAllocMBList() {

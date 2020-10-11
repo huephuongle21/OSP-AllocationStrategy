@@ -30,11 +30,12 @@ void allocateNewMemory(AllocationStrategy* strategy, std::string name);
 void deallocateMemory(LinkedList* allocMBList, LinkedList* freedMBList, int* numbers, unsigned int size);
 
 // Allocate memory to the hole when the size of the hole is similar to the new name
-void allocateMemoryToHole(LinkedList* freedMBList, LinkedList* allocMBList, std::string name, MemoryBlock* copy);
+void allocateMemoryToHole(LinkedList* freedMBList, LinkedList* allocMBList, std::string name, MemoryBlock* hole);
 
 // Split hole to allocate memory when size of the hole is larger
 void splitHole(std::string name, LinkedList* freedMBList, LinkedList* allocMBList, MemoryBlock* hole, int gap);
 
+// Add the hole back to allocMBList after allocating
 void updateAllocFromFreed(LinkedList* allocMBList, MemoryBlock* hole, std::string name, int size);
 
 void perform(AllocationStrategy* strategy, std::vector<std::string>& names, int* numbers);

@@ -22,7 +22,6 @@ public:
     int getId();
 
     void printBlockInFreedMBList(std::ostream& outStream);
-
     void printBlockInAllocMBList(std::ostream& outStream);
 
 private:

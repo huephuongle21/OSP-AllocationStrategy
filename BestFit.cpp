@@ -39,6 +39,5 @@ bool BestFit::perform(std::string name) {
         // Return true as memory is allocated
         isAllocated = true;
     }
-
     return isAllocated;
 }
